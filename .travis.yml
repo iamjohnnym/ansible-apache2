@@ -46,3 +46,26 @@ script:
     | grep -q 80
     && (echo 'Apache2 is listening: pass' && exit 0)
     || (echo 'Apache2 is listening: fail' && exit 1)
+
+  #  
+  #                CREATE HTTPS DEPLOYMENT
+  #
+  # Run the role/playbook with ansible-playbook.
+  - ansible-playbook -i tests/inventory/test tests/$SITE -e "SSL=true,port=443" --connection=local --sudo
+
+  # Run the role/playbook again, checking to make sure it's idempotent.
+  - >
+    ansible-playbook -i tests/inventory/test tests/$SITE -e "SSL=true,port=443" --connection=local --sudo
+    | grep -q 'changed=0.*failed=0'
+    && (echo 'Idempotence test: pass' && exit 0)
+    || (echo 'Idempotence test: fail' && exit 1)
+
+  - curl -I https://example.com/
+
+  - sudo netstat -plnt
+
+  - >
+    sudo netstat -plnt
+    | grep -q 443
+    && (echo 'Apache2 is listening: pass' && exit 0)
+    || (echo 'Apache2 is listening: fail' && exit 1)
