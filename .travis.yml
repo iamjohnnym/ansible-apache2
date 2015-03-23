@@ -30,3 +30,15 @@ script:
     | grep -q 'changed=0.*failed=0'
     && (echo 'Idempotence test: pass' && exit 0)
     || (echo 'Idempotence test: fail' && exit 1)
+
+  - >
+      curl -Is http://localhost/
+      | grep -q "HTTP/1.1 200 Found"
+      && (echo 'Apache2 is accessible: pass' && exit 0)
+      || (echo 'Apache2 is accessible: fail' && exit 1)
+
+  - >
+      sudo netstat -plnt
+      | grep -q 80
+      && (echo 'Jira is running: pass' && exit 0)
+      || (echo 'Jira is running: fail' && exit 1)
