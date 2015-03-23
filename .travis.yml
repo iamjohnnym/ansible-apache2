@@ -66,7 +66,7 @@ script:
 
   - cat /etc/apache2/ports.conf
 
-  - cat /etc/apache2/sites-availble.com/000.app.example.com.conf
+  - cat /etc/apache2/sites-availble.com/000.example.com.conf
 
   - apache2ctl -M
 

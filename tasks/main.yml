@@ -26,6 +26,7 @@
   with_items:
     - { src: apache2.conf.j2, dest: apache2.conf }
     - { src: app.conf.j2, dest: "sites-available/000.{{ server_name }}.conf" }
+    - { src: ports.conf.j2, dest: ports.conf }
   sudo: yes
 
 - name: create document root
@@ -45,5 +46,5 @@
   raw: a2ensite {{ item }}
   with_items:
     - "000.{{ server_name }}.conf"
-  notify: start apache2
+  notify: restart apache2
   sudo: yes
