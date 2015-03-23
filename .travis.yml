@@ -64,13 +64,13 @@ script:
 
   - sudo netstat -plnt
 
-  - cat /etc/apache2/ports.conf
+  - sudo cat /etc/apache2/ports.conf
 
-  - cat /etc/apache2/sites-availble.com/000.example.com.conf
+  - sudo cat /etc/apache2/sites-availble/000.example.com.conf
 
-  - apache2ctl -M
+  - sudo apache2ctl -M
 
-  - apache2ctl -S
+  - sudo apache2ctl -S
 
   - >
     sudo netstat -plnt
