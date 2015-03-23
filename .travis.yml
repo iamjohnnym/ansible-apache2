@@ -64,6 +64,14 @@ script:
 
   - sudo netstat -plnt
 
+  - cat /etc/apache2/ports.conf
+
+  - cat /etc/apache2/sites-availble.com/000.app.example.com.conf
+
+  - apache2ctl -M
+
+  - apache2ctl -S
+
   - >
     sudo netstat -plnt
     | grep -q 443
