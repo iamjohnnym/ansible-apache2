@@ -17,7 +17,7 @@
     {% endif %}
 
 
-    {% if SSL %}
+    {% if SSL and SELF_SIGNED %}
     # Setting SSL settings
     SSLEngine on
     # TODO: Should look into SSLv3
@@ -26,7 +26,6 @@
     # jinja2 templating variables to set names of SSL files
     SSLCertificateFile /etc/ssl/certs/{{ ssl_crt }}
     SSLCertificateKeyFile /etc/ssl/private/{{ ssl_key }}
-    SSLCertificateChainFile /etc/ssl/certs/{{ ssl_ca_chain }}
     {% endif %}
 
     DocumentRoot {{ document_root }}

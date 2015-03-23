@@ -10,6 +10,16 @@
     - install
   sudo: yes
 
+- name: copy self-signed ssl certificates
+  raw: 'openssl req -nodes -newkey rsa:2048 -keyout /etc/ssl/private/{{ ssl_key }} -out /etc/ssl/certs/{{ ssl_csr }} -subj "/C=US/ST=./L=./O=./OU=./CN={{ server_name }}"'
+  when: SELF_SIGNED == true and SSL == true
+
+- name: enable ssl module
+  apache2_module: name={{ item }}
+                  state=present
+  with_items:
+    - ssl
+
 - name: copy config files
   template: src={{ item.src }}
             dest=/etc/apache2/{{ item.dest }}
