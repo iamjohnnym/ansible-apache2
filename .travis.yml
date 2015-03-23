@@ -55,7 +55,7 @@ script:
 
   # Run the role/playbook again, checking to make sure it's idempotent.
   - >
-  - ansible-playbook -i tests/inventory/test tests/$SITE -e 'SSL=true' --connection=local --sudo
+    ansible-playbook -i tests/inventory/test tests/$SITE -e 'SSL=true' --connection=local --sudo
     | grep -q 'changed=0.*failed=0'
     && (echo 'Idempotence test: pass' && exit 0)
     || (echo 'Idempotence test: fail' && exit 1)
@@ -72,4 +72,4 @@ script:
     sudo netstat -plnt
     | grep -q 443
     && (echo 'Apache2 is listening: pass' && exit 0)
-     || (echo 'Apache2 is listening: fail' && exit 1)
+    || (echo 'Apache2 is listening: fail' && exit 1)
