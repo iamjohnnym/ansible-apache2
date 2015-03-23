@@ -17,7 +17,7 @@
 ## 1. QuickStart
 
 ```bash
-git clone https://github.com/configuresystems/ansible-jira.git roles/ansible-jira
+git clone https://github.com/configuresystems/ansible-apache2.git roles/ansible-apache2
 # Create a playbook file to use, there's a sample one in tests/test.yml
 # Create a group_vars or update the default values in defaults/main.yml
 ansible-playbook -i path/to/inventory ansible-playbook.yml
