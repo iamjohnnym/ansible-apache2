@@ -22,6 +22,9 @@ script:
 
   - ansible-playbook -i tests/inventory/test tests/$SITE --syntax-check
 
+  #  
+  #                CREATE HTTP DEPLOYMENT
+  #
   # Run the role/playbook with ansible-playbook.
   - ansible-playbook -i tests/inventory/test tests/$SITE --connection=local --sudo
 
@@ -32,10 +35,41 @@ script:
     && (echo 'Idempotence test: pass' && exit 0)
     || (echo 'Idempotence test: fail' && exit 1)
 
-  - curl -I http://example.com/
+  - >
+    curl -Is http://example.com/
+    | grep -q "HTTP/1.1 200 Found"     
+    && (echo 'Apache2 is accessible: pass' && exit 0)      
+    || (echo 'Apache2 is accessible: fail' && exit 1)
 
   - >
-      sudo netstat -plnt
-      | grep -q 80
-      && (echo 'Apache2 is listening: pass' && exit 0)
-      || (echo 'Apache2 is listening: fail' && exit 1)
+    sudo netstat -plnt
+    | grep -q 80
+    && (echo 'Apache2 is listening: pass' && exit 0)
+    || (echo 'Apache2 is listening: fail' && exit 1)
+
+  #  
+  #                CREATE HTTPS DEPLOYMENT
+  #
+  # Run the role/playbook with ansible-playbook.
+  - ansible-playbook -i tests/inventory/test tests/$SITE -e 'SSL=true' --connection=local --sudo
+
+  # Run the role/playbook again, checking to make sure it's idempotent.
+  - >
+  - ansible-playbook -i tests/inventory/test tests/$SITE -e 'SSL=true' --connection=local --sudo
+    | grep -q 'changed=0.*failed=0'
+    && (echo 'Idempotence test: pass' && exit 0)
+    || (echo 'Idempotence test: fail' && exit 1)
+
+  - curl -I https://example.com/
+
+  - >
+    curl -Is https://example.com/
+    | grep -q "HTTP/1.1 200 Found"     
+    && (echo 'Apache2 is accessible: pass' && exit 0)      
+    || (echo 'Apache2 is accessible: fail' && exit 1)
+
+  - >
+    sudo netstat -plnt
+    | grep -q 443
+    && (echo 'Apache2 is listening: pass' && exit 0)
+     || (echo 'Apache2 is listening: fail' && exit 1)
