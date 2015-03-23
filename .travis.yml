@@ -15,7 +15,7 @@ install:
 
   # Add ansible.cfg to pick up roles path.
   - printf '[defaults]\nroles_path = ../' > ansible.cfg
-  - sudo printf '\n127.0.0.1 example.com' >> /etc/hosts
+  - printf '\n127.0.0.1 example.com' | sudo tee -a /etc/hosts
  
 script:
   # Check the role/playbook's syntax.
