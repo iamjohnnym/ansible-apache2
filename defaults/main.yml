@@ -1,0 +1,22 @@
+---
+
+port: 80
+
+# Domain name
+server_name: example.com
+
+# Leave blank to skip aliases
+server_alias: www.example.com
+
+# Where you files are stored
+document_root: /var/www/vhosts/{{ server_name }}
+document_owner: www-data
+document_group: www-data
+
+# SSL certificate information
+ssl_crt: 2015.example.com.crt
+ssl_key: 2015.example.com.key
+ssl_ca_chain: 2015.example.com.ca.crt
+
+# Global 
+SSL: false
