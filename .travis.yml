@@ -15,6 +15,7 @@ install:
 
   # Add ansible.cfg to pick up roles path.
   - printf '[defaults]\nroles_path = ../' > ansible.cfg
+  - sudo printf '\n127.0.0.1 example.com' >> /etc/hosts
  
 script:
   # Check the role/playbook's syntax.
@@ -31,14 +32,10 @@ script:
     && (echo 'Idempotence test: pass' && exit 0)
     || (echo 'Idempotence test: fail' && exit 1)
 
-  - >
-      curl -Is http://localhost/
-      | grep -q "HTTP/1.1 200 Found"
-      && (echo 'Apache2 is accessible: pass' && exit 0)
-      || (echo 'Apache2 is accessible: fail' && exit 1)
+  - curl -I http://example.com/
 
   - >
       sudo netstat -plnt
       | grep -q 80
-      && (echo 'Jira is running: pass' && exit 0)
-      || (echo 'Jira is running: fail' && exit 1)
+      && (echo 'Apache2 is listening: pass' && exit 0)
+      || (echo 'Apache2 is listening: fail' && exit 1)
