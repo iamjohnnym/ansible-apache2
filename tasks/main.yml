@@ -10,8 +10,15 @@
     - install
   sudo: yes
 
+- name: debug apache
+  raw: apache2ctl -V
+  sudo: yes
+  register: dbv
+
+- debug: var=dbv
+
 - name: create self-signed ssl certificate
-  raw: 'openssl req -nodes -newkey rsa:2048 -keyout /etc/ssl/private/{{ ssl_key }} -out /etc/ssl/certs/{{ ssl_csr }} -subj "/C=US/ST=./L=./O=./OU=./CN={{ server_name }}"'
+  raw: 'openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/{{ ssh_key }} -out /etc/ssl/certs/{{ ssl_crt }} -subj "/C=US/ST=./L=./O=./OU=./CN={{ server_name }}"'
   when: SELF_SIGNED and SSL
 
 - name: enable ssl module
