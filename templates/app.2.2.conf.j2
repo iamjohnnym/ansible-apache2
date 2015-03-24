@@ -12,9 +12,9 @@
 <VirtualHost *:{{ port }}>
 
     ServerName {{ server_name }}
-    {% if server_alias %}
-    ServerAlias {{ server_alias }}
-    {% endif %}
+{% if server_alias %}
+ServerAlias {{ server_alias }}
+{% endif %}
 
     {% if SSL and SELF_SIGNED %}
     SSLEngine on
@@ -26,9 +26,9 @@
 
     <Directory {{ document_root }}>
         Options -Indexes +FollowSymLinks -MultiViews
-    {% if SSL and SELF_SIGNED %}
-        SSLOptions +StdEnvVars
-    {% endif %}
+{% if SSL and SELF_SIGNED %}
+SSLOptions +StdEnvVars
+{% endif %}
         AllowOverride All
     </Directory>
 
@@ -40,9 +40,9 @@
 
     LogLevel warn
 
-    {% if SSL and SELF_SIGNED %}
-    BrowserMatch "MSIE [2-6]"                 nokeepalive ssl-unclean-shutdown                 downgrade-1.0 force-response-1.0
-    BrowserMatch "MSIE [17-9]" ssl-unclean-shutdown
-    {% endif %}
+{% if SSL and SELF_SIGNED %}
+BrowserMatch "MSIE [2-6]"                 nokeepalive ssl-unclean-shutdown                 downgrade-1.0 force-response-1.0
+BrowserMatch "MSIE [17-9]" ssl-unclean-shutdown
+{% endif %}
 
 </VirtualHost>
