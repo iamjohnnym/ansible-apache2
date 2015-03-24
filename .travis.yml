@@ -44,7 +44,7 @@ script:
 
   - >
     sudo apache2ctl -S
-    | grep -q 80
+    | grep 80
     | grep -q "example.com"
     && (echo 'Domain is configured: pass' && exit 0)
     || (echo 'Domain is configured: fail' && exit 1)
@@ -78,7 +78,7 @@ script:
 
   - >
     sudo apache2ctl -S
-    | grep -q 443
+    | grep 443
     | grep -q "example.com"
     && (echo 'Domain is configured: pass' && exit 0)
     || (echo 'Domain is configured: fail' && exit 1)

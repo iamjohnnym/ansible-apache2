@@ -6,7 +6,7 @@
 <VirtualHost *:80>
     ServerName http://{{ server_name }}
     Redirect / https://{{ server_name }}
-</VirtualHost >
+</VirtualHost>
 {% endif %}
 
 <VirtualHost *:{{ port }}>
