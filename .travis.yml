@@ -69,8 +69,6 @@ script:
 
   - sudo cat /etc/apache2/sites-available/000.example.com.conf
 
-  - sudo apache2ctl -M
-
   - sudo apache2ctl -S
 
   - >
@@ -78,3 +76,5 @@ script:
     | grep -q 443
     && (echo 'Apache2 is listening: pass' && exit 0)
     || (echo 'Apache2 is listening: fail' && exit 1)
+
+  - sudo tail -25 /var/log/apache2/*
