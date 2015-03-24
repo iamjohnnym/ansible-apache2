@@ -8,6 +8,7 @@ env:
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -y curl python-pip python-apt gcc
+  - cat /etc/*release
 
 install:
   # Install Ansible.
@@ -66,7 +67,7 @@ script:
 
   - sudo cat /etc/apache2/ports.conf
 
-  - sudo cat /etc/apache2/sites-availble/000.example.com.conf
+  - sudo cat /etc/apache2/sites-available/000.example.com.conf
 
   - sudo apache2ctl -M
 
