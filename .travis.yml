@@ -8,11 +8,10 @@ env:
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -y curl python-pip python-apt gcc
-  - cat /etc/*release
 
 install:
   # Install Ansible.
-  - pip install ansible
+  - pip install ansible==1.8.4 
 
   # Add ansible.cfg to pick up roles path.
   - printf '[defaults]\nroles_path = ../' > ansible.cfg
@@ -41,6 +40,11 @@ script:
     | grep -q "HTTP/1.1 200 OK"     
     && (echo 'Apache2 is accessible: pass' && exit 0)      
     || (echo 'Apache2 is accessible: fail' && exit 1)
+
+  - curl -s http://example.com/
+    | grep -iq hello
+    && (echo 'Index Page is configured: pass' && exit 0)
+    || (echo 'Index Page is configured: fail' && exit 1)
 
   - >
     sudo apache2ctl -S
@@ -74,7 +78,16 @@ script:
     && (echo 'Apache2 is accessible: pass' && exit 0)      
     || (echo 'Apache2 is accessible: fail' && exit 1)
 
-  - curl -I http://example.com/
+  - curl -s https://example.com/
+    | grep -iq hello
+    && (echo 'Index Page is configured: pass' && exit 0)
+    || (echo 'Index Page is configured: fail' && exit 1)
+
+  - >
+    sudo apache2ctl -M
+    | grep -iq ssl
+    && (echo 'SSL Mod is configured: pass' && exit 0)
+    || (echo 'SSL Mod is configured: fail' && exit 1)
 
   - >
     sudo apache2ctl -S
