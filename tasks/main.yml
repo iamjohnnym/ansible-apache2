@@ -6,6 +6,7 @@
        update_cache=yes
   with_items:
     - apache2
+  notify: start apache2
   tags:
     - install
   sudo: yes
@@ -20,12 +21,14 @@
 - name: create self-signed ssl certificate
   raw: 'openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/{{ ssl_key }} -out /etc/ssl/certs/{{ ssl_crt }} -subj "/C=US/ST=./L=./O=./OU=./CN={{ server_name }}"'
   when: SELF_SIGNED and SSL
+  sudo: yes
 
 - name: enable ssl module
   apache2_module: name={{ item }}
                   state=present
   with_items:
     - ssl
+  sudo: yes
 
 - name: copy config files
   template: src={{ item.src }}
@@ -55,5 +58,8 @@
   raw: a2ensite {{ item }}
   with_items:
     - "000.{{ server_name }}.conf"
-  notify: restart apache2
   sudo: yes
+
+- name: restart apache2
+  service: name=apache2
+           state=restarted
