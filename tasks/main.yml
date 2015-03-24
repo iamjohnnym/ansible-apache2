@@ -20,6 +20,7 @@
                   state=present
   with_items:
     - ssl
+  when: SSL
   sudo: yes
 
 - name: copy apache2.2 config files
