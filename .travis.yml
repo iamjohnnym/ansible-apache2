@@ -43,6 +43,13 @@ script:
     || (echo 'Apache2 is accessible: fail' && exit 1)
 
   - >
+    sudo apache2ctl -S
+    | grep -q 80
+    | grep -q "example.com"
+    && (echo 'Domain is configured: pass' && exit 0)
+    || (echo 'Domain is configured: fail' && exit 1)
+
+  - >
     sudo netstat -plnt
     | grep -q 80
     && (echo 'Apache2 is listening: pass' && exit 0)
@@ -61,13 +68,20 @@ script:
     && (echo 'Idempotence test: pass' && exit 0)
     || (echo 'Idempotence test: fail' && exit 1)
 
-  - curl -I --insecure https://example.com/
+  - >
+    curl -Is --insecure https://example.com/
+    | grep -q "HTTP/1.1 200 OK"     
+    && (echo 'Apache2 is accessible: pass' && exit 0)      
+    || (echo 'Apache2 is accessible: fail' && exit 1)
 
-  - sudo cat /etc/apache2/ports.conf
+  - curl -I http://example.com/
 
-  - sudo cat /etc/apache2/sites-available/000.example.com.conf
-
-  - sudo apache2ctl -S
+  - >
+    sudo apache2ctl -S
+    | grep -q 443
+    | grep -q "example.com"
+    && (echo 'Domain is configured: pass' && exit 0)
+    || (echo 'Domain is configured: fail' && exit 1)
 
   - >
     sudo netstat -plnt
