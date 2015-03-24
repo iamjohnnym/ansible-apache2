@@ -10,13 +10,6 @@
     - install
   sudo: yes
 
-- name: debug apache
-  raw: apache2ctl -V
-  sudo: yes
-  register: dbv
-
-- debug: var=dbv
-
 - name: create self-signed ssl certificate
   raw: 'openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/{{ ssl_key }} -out /etc/ssl/certs/{{ ssl_crt }} -subj "/C=US/ST=./L=./O=./OU=./CN={{ server_name }}"'
   when: SELF_SIGNED and SSL
@@ -45,6 +38,13 @@
         owner={{ document_owner }}
         group={{ document_group }}
         state=directory
+  sudo: yes
+
+- name: transfer index template
+  template: src=index.html.j2
+            dest=/var/www/vhosts/{{ server_name }}/index.html
+            owner={{ document_owner }}
+            group={{ document_group }}
   sudo: yes
 
 - name: deactivate default domain
