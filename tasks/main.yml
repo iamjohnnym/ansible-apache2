@@ -10,19 +10,53 @@
     - install
   sudo: yes
 
-- name: copy config files
+- name: create self-signed ssl certificate
+  raw: 'openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/{{ ssl_key }} -out /etc/ssl/certs/{{ ssl_crt }} -subj "/C=US/ST=./L=./O=./OU=./CN={{ server_name }}"'
+  when: SELF_SIGNED and SSL
+  sudo: yes
+
+- name: enable ssl module
+  apache2_module: name={{ item }}
+                  state=present
+  with_items:
+    - ssl
+  when: SSL
+  sudo: yes
+
+- name: copy apache2.2 config files
   template: src={{ item.src }}
             dest=/etc/apache2/{{ item.dest }}
   with_items:
-    - { src: apache2.conf.j2, dest: apache2.conf }
-    - { src: app.conf.j2, dest: "sites-available/000.{{ server_name }}.conf" }
+    - { src: apache2.2.2.conf.j2, dest: apache2.conf }
+    - { src: app.2.2.conf.j2, dest: "sites-available/000.{{ server_name }}.conf" }
+    - { src: ports.conf.j2, dest: ports.conf }
   sudo: yes
+  when: ansible_distribution == 'Ubuntu' and
+        ansible_distribution_version == '12.04'
+
+- name: copy apache2.4 config files
+  template: src={{ item.src }}
+            dest=/etc/apache2/{{ item.dest }}
+  with_items:
+    - { src: apache2.2.4.conf.j2, dest: apache2.conf }
+    - { src: app.2.4.conf.j2, dest: "sites-available/000.{{ server_name }}.conf" }
+    - { src: ports.conf.j2, dest: ports.conf }
+  sudo: yes
+  when: ansible_distribution == 'Ubuntu' and
+        ansible_distribution_version == '14.04'
 
 - name: create document root
   file: dest={{ document_root }}
         owner={{ document_owner }}
         group={{ document_group }}
         state=directory
+  sudo: yes
+
+- name: transfer index template
+  template: src=index.html.j2
+            dest=/var/www/vhosts/{{ server_name }}/index.html
+            owner={{ document_owner }}
+            group={{ document_group }}
   sudo: yes
 
 - name: deactivate default domain
@@ -35,5 +69,8 @@
   raw: a2ensite {{ item }}
   with_items:
     - "000.{{ server_name }}.conf"
-  notify: start apache2
   sudo: yes
+
+- name: restart apache2
+  service: name=apache2
+           state=restarted

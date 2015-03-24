@@ -1,0 +1,66 @@
+##################################################
+#                CREATED BY ANSIBLE              #
+##################################################
+
+{% if SSL %}
+<VirtualHost *:80>
+    ServerName http://{{ server_name }}
+    Redirect / https://{{ server_name }}
+</VirtualHost>
+{% endif %}
+
+<VirtualHost *:{{ port }}>
+
+    ServerName {{ server_name }}
+    {% if server_alias %}
+    ServerAlias {{ server_alias }}
+    {% endif %}
+
+    {% if SSL and SELF_SIGNED %}
+    # Setting SSL settings
+    SSLEngine on
+    # TODO: Should look into SSLv3
+    SSLProtocol all -SSLv2
+    SSLCipherSuite ALL:!ADH:!EXPORT:!SSLv2:RC4+RSA:+HIGH:+MEDIUM:+LOW
+    # jinja2 templating variables to set names of SSL files
+    SSLCertificateFile /etc/ssl/certs/{{ ssl_crt }}
+    SSLCertificateKeyFile /etc/ssl/private/{{ ssl_key }}
+    {% endif %}
+
+
+    {% if SSL and not SELF_SIGNED %}
+    # Setting SSL settings
+    SSLEngine on
+    # TODO: Should look into SSLv3
+    SSLProtocol all -SSLv2
+    SSLCipherSuite ALL:!ADH:!EXPORT:!SSLv2:RC4+RSA:+HIGH:+MEDIUM:+LOW
+    # jinja2 templating variables to set names of SSL files
+    SSLCertificateFile /etc/ssl/certs/{{ ssl_crt }}
+    SSLCertificateKeyFile /etc/ssl/private/{{ ssl_key }}
+    SSLCertificateChainFile /etc/ssl/certs/{{ ssl_ca_chain }}
+    {% endif %}
+
+    DocumentRoot {{ document_root }}
+
+    <Directory {{ document_root }}>
+        Options -Indexes +FollowSymLinks -MultiViews
+        {% if SSL and SELF_SIGNED %}
+        SSLOptions +StdEnvVars
+        {% endif %}
+        AllowOverride All
+    </Directory>
+
+    ErrorLog /var/log/apache2/{{ server_name }}.error.log
+    CustomLog /var/log/apache2/{{ server_name }}.access.log forwarded
+
+    # Possible values include: debug, info, notice, warn, error, crit,
+    # alert, emerg.
+
+    LogLevel warn
+
+    {% if SSL and SELF_SIGNED %}
+    BrowserMatch "MSIE [2-6]"                 nokeepalive ssl-unclean-shutdown                 downgrade-1.0 force-response-1.0
+    BrowserMatch "MSIE [17-9]" ssl-unclean-shutdown
+    {% endif %}
+
+</VirtualHost>

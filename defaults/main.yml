@@ -20,3 +20,4 @@ ssl_ca_chain: 2015.example.com.ca.crt
 
 # Global 
 SSL: false
+SELF_SIGNED: true

@@ -2,11 +2,11 @@
 #                CREATED BY ANSIBLE              #
 ##################################################
 
-{% if port == 443 %}
+{% if SSL %}
 <VirtualHost *:80>
     ServerName http://{{ server_name }}
     Redirect / https://{{ server_name }}
-</VirtualHost >
+</VirtualHost>
 {% endif %}
 
 <VirtualHost *:{{ port }}>
@@ -17,7 +17,18 @@
     {% endif %}
 
 
-    {% if SSL %}
+    {% if SSL and SELF_SIGNED %}
+    # Setting SSL settings
+    SSLEngine on
+    # TODO: Should look into SSLv3
+    SSLProtocol all -SSLv2
+    SSLCipherSuite ALL:!ADH:!EXPORT:!SSLv2:RC4+RSA:+HIGH:+MEDIUM:+LOW
+    # jinja2 templating variables to set names of SSL files
+    SSLCertificateFile /etc/ssl/certs/{{ ssl_crt }}
+    SSLCertificateKeyFile /etc/ssl/private/{{ ssl_key }}
+    {% endif %}
+
+    {% if SSL and not SELF_SIGNED %}
     # Setting SSL settings
     SSLEngine on
     # TODO: Should look into SSLv3
