@@ -6,7 +6,6 @@
        update_cache=yes
   with_items:
     - apache2
-  notify: start apache2
   tags:
     - install
   sudo: yes
