@@ -88,3 +88,61 @@ script:
     | grep -q 443
     && (echo 'Apache2 is listening: pass' && exit 0)
     || (echo 'Apache2 is listening: fail' && exit 1)
+
+  #  
+  #                CREATE Passenger HTTP DEPLOYMENT
+  #
+  # Run the role/playbook with ansible-playbook.
+  #
+
+  - git clone https://github.com/configuresystems/ansible-passenger.git ../ansible-passenger
+
+  - ansible-playbook -i ../ansible-apache2/tests/inventory/test ../ansible-apache2/tests/$SITE --syntax-check
+
+  - ansible-playbook -i ../ansible-apache2/tests/inventory/test ../ansible-apache2/tests/$SITE --connection=local --sudo
+
+  - >
+    ansible-playbook -i ../ansible-apache2/tests/inventory/test ../ansible-apache2/tests/$SITE --connection=local --sudo
+    | grep -q 'changed=1.*failed=0'
+    && (echo 'Idempotence test: pass' && exit 0)
+    || (echo 'Idempotence test: fail' && exit 1)
+
+  - >
+    sudo passenger-config --version
+    | grep "5.*.*"
+    && (echo 'Passenger >= 5 is installed: pass' && exit 0)
+    || (echo 'Passenger >= 5 is installed: fail' && exit 1)
+ 
+  - >
+    sudo apache2ctl -M
+    | grep -i passenger
+    && (echo 'Passenger Mod is configured: pass' && exit 0)
+    || (echo 'Passenger Mod is configured: fail' && exit 1)
+
+  - ansible-playbook -i tests/inventory/test tests/$SITE -e "PASSENGER=true" --connection=local --sudo
+
+  # Run the role/playbook again, checking to make sure it's idempotent.
+  - >
+    ansible-playbook -i tests/inventory/test tests/$SITE -e "PASSENGER=true" --connection=local --sudo
+    | grep -q 'changed=1.*failed=0'
+    && (echo 'Idempotence test: pass' && exit 0)
+    || (echo 'Idempotence test: fail' && exit 1)
+
+  - >
+    curl -Is http://example.com/
+    | grep -q "HTTP/1.1 200 OK"     
+    && (echo 'Apache2 is accessible: pass' && exit 0)      
+    || (echo 'Apache2 is accessible: fail' && exit 1)
+
+  - >
+    sudo apache2ctl -S
+    | grep 80
+    | grep -q "example.com"
+    && (echo 'Domain is configured: pass' && exit 0)
+    || (echo 'Domain is configured: fail' && exit 1)
+
+  - >
+    sudo netstat -plnt
+    | grep -q 80
+    && (echo 'Apache2 is listening: pass' && exit 0)
+    || (echo 'Apache2 is listening: fail' && exit 1)
