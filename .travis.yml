@@ -97,12 +97,12 @@ script:
 
   - git clone https://github.com/configuresystems/ansible-passenger.git ../ansible-passenger
 
-  - ansible-playbook -i ../ansible-apache2/tests/inventory/test ../ansible-apache2/tests/$SITE --syntax-check
+  - ansible-playbook -i ../ansible-passenger/tests/inventory/test ../ansible-passenger/tests/$SITE --syntax-check
 
-  - ansible-playbook -i ../ansible-apache2/tests/inventory/test ../ansible-apache2/tests/$SITE --connection=local --sudo
+  - ansible-playbook -i ../ansible-passenger/tests/inventory/test ../ansible-passenger/tests/$SITE --connection=local --sudo
 
   - >
-    ansible-playbook -i ../ansible-apache2/tests/inventory/test ../ansible-apache2/tests/$SITE --connection=local --sudo
+    ansible-playbook -i ../ansible-passenger/tests/inventory/test ../ansible-passenger/tests/$SITE --connection=local --sudo
     | grep -q 'changed=1.*failed=0'
     && (echo 'Idempotence test: pass' && exit 0)
     || (echo 'Idempotence test: fail' && exit 1)
