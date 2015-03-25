@@ -42,8 +42,8 @@ ansible-playbook -i path/to/inventory ansible-playbook.yml
 
 ## 2. Overview
 
-An Ansible playbook to automate the installation of Apache2.
-
+An Ansible playbook to automate the installation of Apache2.  It can generate
+self-signed SSL certificates, along with including support for Passenger.
 
 ## 3. Requirements
 
@@ -86,6 +86,8 @@ ansible-playbook ansible-apache2.yml
 - ssl_key: If using SSL, where to put the KEY file
 - ssl_ca_chain: If using SSL, where to put the CA.CRT file
 - SSL: Boolean.
+- SELF_SIGNED: Boolean.
+- PASSENGER: Boolean.
 
 
 ### 5. After install
