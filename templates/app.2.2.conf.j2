@@ -16,6 +16,14 @@
     ServerAlias {{ server_alias }}
     {% endif %}
 
+    {% if PASSENGER %}
+    PassengerMaxPoolSize 20
+    PassengerMinInstances 18
+    PassengerPoolIdleTime 10
+    PassengerMaxRequests 120
+    PassengerMaxRequestQueueSize 200
+    {% endif %}
+
     {% if SSL and SELF_SIGNED %}
     # Setting SSL settings
     SSLEngine on
@@ -64,3 +72,11 @@
     {% endif %}
 
 </VirtualHost>
+
+{% if PASSENGER and not SSL %}
+PassengerPreStart http://{{ server_name }}
+{% endif %}
+
+{% if PASSENGER and SSL %}
+PassengerPreStart https://{{ server_name }}
+{% endif %}
